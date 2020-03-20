@@ -2,6 +2,9 @@ This Excel Project uses macros to access a github project board, and convert it 
 a series of WorkSheets based on the project kanban board columns (lanes). It imports 
 data based on the datatype (note or issue) and fills in columns on the sheet. 
 
+It's 100% not perfect, and was intended for a quick project. I'm continuing to work on this in my spare time.
+USE AT YOUR OWN RISK.
+
 ## --Installation --
 To install, first import the project at https://github.com/VBA-tools/VBA-JSON. This allows for the conversion from JSON
 to VBA objects.
