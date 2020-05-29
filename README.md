@@ -36,12 +36,9 @@ DO NOT CHANGE THE ORDER OF THESE VALUES.
 ## ---Usage---
 Upon opening the file, you may be prompted to enable macros for this sheet. Click Enable Content.
 
-To kick off the macro, you can go to the developer tab in Excel, and click Macros. 
-Select ThisWorkbook.OnRun macro, and click run. The sheet will populate with the board and 
-card info. If you do not have the developer tab, right click on the ribbon (the area with File, Home,
-Insert) and select "Customize Ribbon". Click "Developer" in the right side box and click Ok.
+To run the report, select the run mode and click Run. A new sheet will open for saving. Full is 
+the original mode, getting all information about the board. Issues Only mode places all issues 
+on the board in a single spreadsheet, with only Status, Incident Number, Short Description, 
+State, Story Points, and Card Address. 
 
-!!! Remember to remove the Config tab and save as XLSX before emailing out. Most orgs will not allow emailing
-of XLSM (macro enabled workbooks), and the Personal Access Token should be kept private as it's 
-essentially a password.
-
+!!! The Personal Access Token should be kept private as it's essentially a password.
