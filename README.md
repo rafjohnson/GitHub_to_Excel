@@ -41,4 +41,7 @@ the original mode, getting all information about the board. Issues Only mode pla
 on the board in a single spreadsheet, with only Status, Incident Number, Short Description, 
 State, Story Points, and Card Address. 
 
+To run as a Milestone Listing, enter the Milestone URL, and select "Milestone" from the dropdown, and 
+click Run. Has the same information as the Issues Only report, adding a column for the sprint.
+
 !!! The Personal Access Token should be kept private as it's essentially a password.
