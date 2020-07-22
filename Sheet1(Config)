@@ -1,9 +1,0 @@
-    
-
-
-
-Public Function getRunMode() As String
-    getRunMode = cmbRunMode.Value
-End Function
-
-
