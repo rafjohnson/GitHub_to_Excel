@@ -1,8 +1,0 @@
-Option Explicit
-
-
-Sub btnRun_Click()
-    
-    ThisWorkbook.OnRun
-    
-End Sub
