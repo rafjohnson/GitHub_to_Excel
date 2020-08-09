@@ -61,7 +61,7 @@ Public Function GetProjectsByOrg(strOrgName As String) As String
     Dim finalJSON As String
     Dim URL As String
     Dim page As Integer
-    For page = 1 To 1000                           'and hope we never hit 99000 boards....
+    For page = 1 To 1000                         'and hope we never hit 99000 boards....
         With GitHubAPI
             URL = BaseURL + "/orgs/" _
                 + strOrgName _
@@ -104,7 +104,7 @@ End Function
 Function GetUserStoriesByMilestone(strOrgName As String, strRepo As String, strMilestoneNum As String) As String
     Dim GitHubAPI As New MSXML2.XMLHTTP
     Dim Json As Object
-        Dim pageJSON As String
+    Dim pageJSON As String
     Dim allJSON As String
     Dim finalJSON As String
     Dim page As Integer
@@ -126,24 +126,23 @@ Function GetUserStoriesByMilestone(strOrgName As String, strRepo As String, strM
             .setRequestHeader "Authorization", "Basic " + usernameP
             .send ""
         End With
-    Next page
-     'remove leading and trailing square brackets, they'll be re-added after final page is processed. Should be first and last characters.
-        pageJSON = GitHubAPI.responseText
+    'remove leading and trailing square brackets, they'll be re-added after final page is processed. Should be first and last characters.
+    pageJSON = GitHubAPI.responseText
         
         
-        pageJSON = Mid(pageJSON, 2, Len(pageJSON) - 2)
+    pageJSON = Mid(pageJSON, 2, Len(pageJSON) - 2)
         
-        Debug.Print ("pageJSON" + vbCr + Right(pageJSON, 255))
+    Debug.Print ("pageJSON" + vbCr + Right(pageJSON, 255))
         
-        allJSON = allJSON + pageJSON
+    allJSON = allJSON + pageJSON
         
-        If GitHubAPI.responseText = "[]" Then
-            page = 1000
-        End If
-    Next page
-     'add leading and trailing square brackets
-    finalJSON = "[" + allJSON + "]"
-    GetUserStoriesByMilestone = finalJSON
+    If GitHubAPI.responseText = "[]" Then
+        page = 1000
+    End If
+Next page
+'add leading and trailing square brackets
+finalJSON = "[" + allJSON + "]"
+GetUserStoriesByMilestone = finalJSON
 End Function
 
 Function GetProjectsByRepo(strOrgName As String, strRepo As String) As String
@@ -183,7 +182,7 @@ Function GetProjectsByRepo(strOrgName As String, strRepo As String) As String
             page = 1000
         End If
     Next page
-     'add leading and trailing square brackets
+    'add leading and trailing square brackets
     finalJSON = "[" + allJSON + "]"
     GetProjectsByRepo = finalJSON
 End Function
@@ -192,16 +191,16 @@ Function getColumnsByProject(projectID As String) As String
     Dim GitHubAPI As New MSXML2.XMLHTTP
     Dim Json As Object
     Dim URL As String
-        With GitHubAPI
-            URL = BaseURL + "/projects/" _
-                + projectID _
-                + "/columns"
-            .Open "GET", URL, False
+    With GitHubAPI
+        URL = BaseURL + "/projects/" _
+            + projectID _
+            + "/columns"
+        .Open "GET", URL, False
             
-            .setRequestHeader "Accept", "application/vnd.github.inertia-preview+json"
-            .setRequestHeader "Authorization", "Basic " + usernameP
-            .send ""
-        End With
+        .setRequestHeader "Accept", "application/vnd.github.inertia-preview+json"
+        .setRequestHeader "Authorization", "Basic " + usernameP
+        .send ""
+    End With
     getColumnsByProject = GitHubAPI.responseText
 End Function
 
@@ -240,7 +239,7 @@ Function getCardsByColumn(columnID As String) As String
             page = 1000
         End If
     Next page
-     'add leading and trailing square brackets
+    'add leading and trailing square brackets
     finalJSON = "[" + allJSON + "]"
     getCardsByColumn = finalJSON
 End Function
@@ -510,6 +509,8 @@ Public Sub OnRun()
             Dim labelIndex As Integer
             Dim assigneeIndex As Integer
             Dim assignees As String
+            
+            
             '-------Get Columns for project board
             Set columnsObj = processJSONtoJSONObject(getColumnsByProject(projectID))
         
@@ -535,7 +536,7 @@ Public Sub OnRun()
                 Set simpleWS = OutputWorkbook.Worksheets(1)
             
                 simpleWS.Name = "Issues"
-            
+                
                 Dim iStartRow As Integer
                 iStartRow = 1
                 
@@ -549,27 +550,32 @@ Public Sub OnRun()
                 OutputWorkbook.Sheets("Issues").Cells(iStartRow, Simple_AssignedTo) = "Assigned To"
                 
                 'still need to go through each column to get the cards.
-            
+                
             
                 For colIndex = 1 To columnsObj.count
                     colID = columnsObj(colIndex)("id")
                     Set cardsObj = processJSONtoJSONObject(getCardsByColumn(colID))
-                
+                    
                     Dim cardIndex As Integer
                 
                     colName = columnsObj(colIndex)("name")
-                
-
-                    For cardIndex = 1 To cardsObj.count
                     
+                    
+                    For cardIndex = 1 To cardsObj.count
+                        
                         'check if note or issue by looking for content_url key (has key, is issue)
                         If cardsObj(cardIndex).Exists("content_url") Then
+    
                             'is issue
+                            
+                            'increment row
+                            iStartRow = iStartRow + 1
                             'need to get issue info by issue ID.
                             issueURL = cardsObj(cardIndex)("content_url")
                         
                             Set issueObj = processJSONtoJSONObject(getIssueByIssueURL(issueURL))
-                        
+                                
+                            
                             'get INC number
                             'INC Number is always INC followed by some number of numbers.
                             Dim INCNumber As String
@@ -609,28 +615,33 @@ Public Sub OnRun()
                             cardNum = issueObj("number")
                         
                             'output data
-                            OutputWorkbook.Sheets("Issues").Cells(iStartRow + cardIndex, Simple_CardAddress) = cardLink
-                            OutputWorkbook.Sheets("Issues").Cells(iStartRow + cardIndex, Simple_Lane) = colName
-                            OutputWorkbook.Sheets("Issues").Cells(iStartRow + cardIndex, Simple_IncidentNumber) = INCNumber
-                            OutputWorkbook.Sheets("Issues").Cells(iStartRow + cardIndex, Simple_Title) = issueTitle
-                            OutputWorkbook.Sheets("Issues").Cells(iStartRow + cardIndex, Simple_Status) = issueObj("state")
-                            OutputWorkbook.Sheets("Issues").Cells(iStartRow + cardIndex, Simple_StoryPoints) = storyPoints
+                            OutputWorkbook.Sheets("Issues").Cells(iStartRow, Simple_CardAddress) = cardLink
+                            OutputWorkbook.Sheets("Issues").Cells(iStartRow, Simple_Lane) = colName
+                            OutputWorkbook.Sheets("Issues").Cells(iStartRow, Simple_IncidentNumber) = INCNumber
+                            OutputWorkbook.Sheets("Issues").Cells(iStartRow, Simple_Title) = issueTitle
+                            OutputWorkbook.Sheets("Issues").Cells(iStartRow, Simple_Status) = issueObj("state")
+                            OutputWorkbook.Sheets("Issues").Cells(iStartRow, Simple_StoryPoints) = storyPoints
                             If issueObj("assignees").count <> 0 Then
                                 'loop over assignees
                                 assignees = ""
                                 For assigneeIndex = 1 To issueObj("assignees").count
                                     assignees = assignees & issueObj("assignees")(assigneeIndex)("login") & vbCrLf
                                 Next assigneeIndex
-                                OutputWorkbook.Sheets("Issues").Cells(iStartRow + cardIndex, Simple_AssignedTo) = assignees
+                                OutputWorkbook.Sheets("Issues").Cells(iStartRow, Simple_AssignedTo) = assignees
                             End If
+
+                            
                         Else
                             'is note
                             'skipping these on Issues only run.
                         
                         End If                   'end if issue...
-                    
+                        
+                        
                     Next cardIndex
-                    iStartRow = iStartRow + cardIndex - 1
+                   
+                   'set last row
+                
                 Next colIndex
             
                 'autosize
